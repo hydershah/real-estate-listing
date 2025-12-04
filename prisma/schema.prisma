@@ -48,6 +48,17 @@ model User {
   listings  Listing[]
 }
 
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
 model Listing {
   id          String        @id @default(cuid())
   title       String

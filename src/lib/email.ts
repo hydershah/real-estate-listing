@@ -82,3 +82,28 @@ export async function sendListingCreatedEmails(data: ListingEmailData) {
     sendListingCreatedEmailToAdmin(data),
   ])
 }
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: 'Reset Your Password',
+      html: `
+        <h1>Password Reset Request</h1>
+        <p>You requested to reset your password.</p>
+        <p>Click the link below to reset your password. This link will expire in 1 hour.</p>
+        <p><a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #0070f3; color: white; text-decoration: none; border-radius: 6px;">Reset Password</a></p>
+        <p>Or copy and paste this link into your browser:</p>
+        <p>${resetUrl}</p>
+        <p>If you didn't request this, please ignore this email.</p>
+      `,
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to send password reset email:', error)
+    return { success: false, error: 'Failed to send email' }
+  }
+}
