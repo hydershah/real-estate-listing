@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  PENDING_SALE
+  SOLD
+  EXPIRED
+}
+
+enum PropertyType {
+  SINGLE_FAMILY
+  CONDO
+  TOWNHOUSE
+  MULTI_FAMILY
+  APARTMENT
+  LAND
+  COMMERCIAL
+  MOBILE
+}
+
+enum ListingType {
+  FOR_SALE
+  FOR_RENT
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  listings  Listing[]
+}
+
+model Listing {
+  id          String        @id @default(cuid())
+  title       String
+  description String        @db.Text
+  status      ListingStatus @default(DRAFT)
+  
+  // Basics
+  propertyType PropertyType
+  listingType  ListingType
+  price        Decimal      @db.Decimal(12, 2)
+  
+  // Location
+  address     String
+  unitNumber  String?
+  city        String
+  state       String
+  zipCode     String
+  county      String?
+  neighborhood String?
+  
+  // Details
+  bedrooms    Int
+  bathrooms   Decimal       @db.Decimal(3, 1) // Allows 1.5, 2.5 etc
+  squareFeet  Int
+  lotSize     Decimal?      @db.Decimal(10, 2)
+  yearBuilt   Int?
+  stories     Int?
+  
+  // Features (stored as JSON or boolean flags - using boolean for simplicity/querying)
+  features    Json?         // Flexible storage for amenities like pool, ac, etc.
+  
+  // Media
+  photos      String[]      // Array of URLs
+  virtualTour String?
+  videoUrl    String?
+  
+  // Financial
+  hoaFee      Decimal?      @db.Decimal(10, 2)
+  taxAmount   Decimal?      @db.Decimal(10, 2)
+  
+  // Relations
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([city, state])
+  @@index([price])
+}
