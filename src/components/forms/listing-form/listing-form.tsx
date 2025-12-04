@@ -217,11 +217,11 @@ export function ListingForm({ initialData }: ListingFormProps) {
               </Button>
               
               {currentStep === STEPS.length - 1 ? (
-                <Button type="submit" disabled={isSubmitting}>
+                <Button key="submit-btn" type="submit" disabled={isSubmitting}>
                   {initialData?.id ? 'Update Listing' : 'Create Listing'}
                 </Button>
               ) : (
-                <Button type="button" onClick={nextStep}>
+                <Button key="next-btn" type="button" onClick={nextStep}>
                   Next
                 </Button>
               )}
