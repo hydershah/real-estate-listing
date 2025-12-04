@@ -47,6 +47,7 @@ export async function signup(prevState: any, formData: FormData) {
       },
     })
   } catch (error) {
+    console.error('Signup error:', error)
     return {
       message: 'Database Error: Failed to Create User.',
     }

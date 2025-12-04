@@ -31,7 +31,7 @@ export function StepPricing() {
             <FormItem>
               <FormLabel>Monthly HOA Fee ($)</FormLabel>
               <FormControl>
-                <Input type="number" min="0" step="0.01" {...field} />
+                <Input type="number" min="0" step="0.01" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -45,7 +45,7 @@ export function StepPricing() {
             <FormItem>
               <FormLabel>Annual Property Tax ($)</FormLabel>
               <FormControl>
-                <Input type="number" min="0" step="0.01" {...field} />
+                <Input type="number" min="0" step="0.01" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>

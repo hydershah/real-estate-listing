@@ -30,7 +30,7 @@ export function StepBasics() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Property Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
@@ -57,7 +57,7 @@ export function StepBasics() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Listing Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />

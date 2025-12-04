@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider, Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { listingSchema, type ListingFormData } from '@/types/listing'
 import { Button } from '@/components/ui/button'
@@ -34,12 +34,27 @@ export function ListingForm({ initialData }: ListingFormProps) {
   const router = useRouter()
   
   const methods = useForm<ListingFormData>({
-    resolver: zodResolver(listingSchema),
+    resolver: zodResolver(listingSchema) as Resolver<ListingFormData>,
     defaultValues: initialData || {
+      title: '',
       propertyType: 'SINGLE_FAMILY',
       listingType: 'FOR_SALE',
+      address: '',
+      unitNumber: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      bedrooms: 0,
+      bathrooms: 0,
+      squareFeet: 0,
+      lotSize: undefined,
+      yearBuilt: undefined,
       features: [],
       photos: [],
+      description: '',
+      price: 0,
+      hoaFee: undefined,
+      taxAmount: undefined,
     },
     mode: 'onChange',
   })
@@ -60,7 +75,15 @@ export function ListingForm({ initialData }: ListingFormProps) {
       case 2: // Details
         fieldsToValidate = ['bedrooms', 'bathrooms', 'squareFeet']
         break
-      // Add other cases as needed
+      case 3: // Features
+        // Features are optional, no required validation
+        break
+      case 4: // Photos
+        // Photos are optional, no required validation
+        break
+      case 5: // Pricing
+        fieldsToValidate = ['price']
+        break
     }
 
     const isValid = await trigger(fieldsToValidate)

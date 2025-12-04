@@ -57,7 +57,7 @@ export function StepDetails() {
           <FormItem>
             <FormLabel>Lot Size (sq ft)</FormLabel>
             <FormControl>
-              <Input type="number" min="0" {...field} />
+              <Input type="number" min="0" {...field} value={field.value ?? ''} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -71,7 +71,7 @@ export function StepDetails() {
           <FormItem>
             <FormLabel>Year Built</FormLabel>
             <FormControl>
-              <Input type="number" min="1800" max={new Date().getFullYear() + 1} {...field} />
+              <Input type="number" min="1800" max={new Date().getFullYear() + 1} {...field} value={field.value ?? ''} />
             </FormControl>
             <FormMessage />
           </FormItem>

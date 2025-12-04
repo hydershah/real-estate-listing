@@ -2,12 +2,13 @@
 
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { sendListingCreatedEmails } from '@/lib/email'
 import { listingSchema, ListingFormData } from '@/types/listing'
 import { revalidatePath } from 'next/cache'
 
 export async function createListing(data: ListingFormData) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { error: 'Unauthorized' }
   }
@@ -19,14 +20,28 @@ export async function createListing(data: ListingFormData) {
   }
 
   try {
-    await prisma.listing.create({
+    const listing = await prisma.listing.create({
       data: {
         ...validatedFields.data,
         userId: session.user.id,
         status: 'DRAFT',
       },
     })
-    
+
+    // Send email notifications to user and admin
+    sendListingCreatedEmails({
+      listingTitle: listing.title,
+      listingAddress: listing.address,
+      listingCity: listing.city,
+      listingState: listing.state,
+      listingPrice: new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(Number(listing.price)),
+      userName: session.user.name || '',
+      userEmail: session.user.email || '',
+    })
+
     revalidatePath('/dashboard')
     return { success: true }
   } catch (error) {

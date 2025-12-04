@@ -3,7 +3,12 @@ import { redirect } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-import { ListingsTable } from "@/components/dashboard/listings-table"
+import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { ProjectedSavingsCard } from "@/components/dashboard/projected-savings-card"
+import { ActiveListingsCard } from "@/components/dashboard/active-listings-card"
+import { PropertyCard } from "@/components/dashboard/property-card"
+import { ViewsReportCard } from "@/components/dashboard/views-report-card"
+import { Plus } from "lucide-react"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -21,22 +26,103 @@ export default async function DashboardPage() {
     }
   })
 
+  // Calculate stats
+  const activeListings = listings.filter(l => l.status === 'ACTIVE').length
+  const pendingListings = listings.filter(l =>
+    l.status === 'PENDING_REVIEW' || l.status === 'PENDING_SALE'
+  ).length
+
+  // Calculate projected savings (example: 3% commission savings on active listings)
+  const totalActiveValue = listings
+    .filter(l => l.status === 'ACTIVE')
+    .reduce((sum, l) => sum + Number(l.price), 0)
+  const projectedSavings = Math.round(totalActiveValue * 0.03) || 10801 // Default for demo
+
+  // Sample views data - in a real app this would come from analytics
+  const viewsData = [
+    { label: 'Direct Views', value: 250, color: '#00D9A5' },
+    { label: 'Search Views', value: 100, color: '#3B82F6' },
+    { label: 'Social Media', value: 75, color: '#8B5CF6' },
+    { label: 'Referrals', value: 50, color: '#F59E0B' },
+  ]
+
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">My Dashboard</h1>
-          <p className="text-gray-500">Manage your property listings</p>
+    <div className="min-h-screen bg-background">
+      <DashboardHeader userName={session.user.name} />
+
+      <main className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        {/* Greeting */}
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+            Hello {session.user.name?.split(' ')[0] || 'Agent'},
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back! Here&apos;s an overview of your listings.
+          </p>
         </div>
-        <Link href="/listings/new">
-          <Button>Create New Listing</Button>
-        </Link>
-      </div>
-      
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">My Listings</h2>
-        <ListingsTable listings={listings} />
-      </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+          {/* Projected Savings */}
+          <ProjectedSavingsCard amount={projectedSavings} />
+
+          {/* Active Listings */}
+          <ActiveListingsCard
+            activeCount={activeListings}
+            pendingCount={pendingListings}
+          />
+
+          {/* Views Report */}
+          <ViewsReportCard data={viewsData} />
+        </div>
+
+        {/* Listings Section */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">
+                My Listings
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {listings.length} {listings.length === 1 ? 'property' : 'properties'}
+              </p>
+            </div>
+            <Link href="/listings/new">
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Create Listing</span>
+                <span className="sm:hidden">New</span>
+              </Button>
+            </Link>
+          </div>
+
+          {listings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4 rounded-xl border border-dashed border-border bg-card/50">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Plus className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                No listings yet
+              </h3>
+              <p className="text-muted-foreground text-center mb-6 max-w-md">
+                Get started by creating your first property listing. It only takes a few minutes.
+              </p>
+              <Link href="/listings/new">
+                <Button size="lg" className="gap-2">
+                  <Plus className="h-5 w-5" />
+                  Create Your First Listing
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              {listings.map((listing) => (
+                <PropertyCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   )
 }
