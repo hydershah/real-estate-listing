@@ -26,14 +26,14 @@ export default function LoginPage() {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md border-border bg-card">
-          <CardHeader className="space-y-1 px-8 pt-8">
+          <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-foreground">Welcome back</CardTitle>
             <CardDescription className="text-muted-foreground">
               Enter your email below to login to your account
             </CardDescription>
           </CardHeader>
-          <form action={action}>
-            <CardContent className="space-y-4 px-8">
+          <form action={action} className="flex flex-col gap-6">
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-foreground">Email</Label>
                 <Input
@@ -42,7 +42,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="agent@example.com"
                   required
-                  className="bg-background border-border"
+                  className="bg-background border-border h-10"
                 />
               </div>
               <div className="space-y-2">
@@ -60,7 +60,7 @@ export default function LoginPage() {
                   name="password"
                   type="password"
                   required
-                  className="bg-background border-border"
+                  className="bg-background border-border h-10"
                 />
               </div>
               {errorMessage && (
@@ -69,8 +69,8 @@ export default function LoginPage() {
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex flex-col space-y-4 px-8 pb-8">
-              <Button type="submit" className="w-full" disabled={isPending}>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button type="submit" className="w-full h-10" disabled={isPending}>
                 {isPending ? 'Signing in...' : 'Sign In'}
               </Button>
               <div className="text-sm text-center text-muted-foreground">
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer className="p-4 text-center text-sm text-muted-foreground">
-        &copy; {new Date().getFullYear()} ListClose. All rights reserved.
+        &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> ListClose. All rights reserved.
       </footer>
     </div>
   )

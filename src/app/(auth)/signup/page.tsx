@@ -32,7 +32,7 @@ export default function SignupPage() {
               Enter your details to get started with ListClose
             </CardDescription>
           </CardHeader>
-          <form action={action}>
+          <form action={action} className="flex flex-col gap-6">
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-foreground">Full Name</Label>
@@ -41,7 +41,7 @@ export default function SignupPage() {
                   name="name"
                   placeholder="John Doe"
                   required
-                  className="bg-background border-border"
+                  className="bg-background border-border h-10"
                 />
                 {state?.errors?.name && (
                   <p className="text-sm text-destructive">{state.errors.name}</p>
@@ -55,7 +55,7 @@ export default function SignupPage() {
                   type="email"
                   placeholder="agent@example.com"
                   required
-                  className="bg-background border-border"
+                  className="bg-background border-border h-10"
                 />
                 {state?.errors?.email && (
                   <p className="text-sm text-destructive">{state.errors.email}</p>
@@ -68,7 +68,7 @@ export default function SignupPage() {
                   name="password"
                   type="password"
                   required
-                  className="bg-background border-border"
+                  className="bg-background border-border h-10"
                 />
                 {state?.errors?.password && (
                   <p className="text-sm text-destructive">{state.errors.password}</p>
@@ -81,7 +81,7 @@ export default function SignupPage() {
               )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full h-10" disabled={isPending}>
                 {isPending ? 'Creating account...' : 'Create Account'}
               </Button>
               <div className="text-sm text-center text-muted-foreground">

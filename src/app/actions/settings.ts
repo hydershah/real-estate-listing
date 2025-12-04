@@ -26,7 +26,7 @@ export async function updateProfile(formData: FormData) {
   })
 
   if (!validatedFields.success) {
-    return { error: validatedFields.error.errors[0].message }
+    return { error: validatedFields.error.issues[0].message }
   }
 
   const { name } = validatedFields.data
@@ -57,7 +57,7 @@ export async function changePassword(formData: FormData) {
   })
 
   if (!validatedFields.success) {
-    return { error: validatedFields.error.errors[0].message }
+    return { error: validatedFields.error.issues[0].message }
   }
 
   const { currentPassword, newPassword } = validatedFields.data

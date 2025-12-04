@@ -26,7 +26,7 @@ export default async function AdminListingsPage() {
         </a>
       </div>
       
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-card rounded-lg shadow p-6">
         <AdminListingsTable listings={listings} />
       </div>
     </div>
