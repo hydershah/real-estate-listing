@@ -17,7 +17,7 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  const listings = await prisma.listing.findMany({
+  const rawListings = await prisma.listing.findMany({
     where: {
       userId: session.user.id
     },
@@ -25,6 +25,16 @@ export default async function DashboardPage() {
       createdAt: 'desc'
     }
   })
+
+  // Serialize Decimal fields for client components
+  const listings = rawListings.map(listing => ({
+    ...listing,
+    price: Number(listing.price),
+    bathrooms: Number(listing.bathrooms),
+    hoaFee: listing.hoaFee ? Number(listing.hoaFee) : null,
+    taxAmount: listing.taxAmount ? Number(listing.taxAmount) : null,
+    lotSize: listing.lotSize ? Number(listing.lotSize) : null,
+  }))
 
   // Calculate stats
   const activeListings = listings.filter(l => l.status === 'ACTIVE').length

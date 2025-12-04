@@ -11,8 +11,17 @@ import { deleteListing } from '@/app/actions/listings'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
+// Serialized listing type with Decimal fields converted to numbers
+type SerializedListing = Omit<Listing, 'price' | 'bathrooms' | 'hoaFee' | 'taxAmount' | 'lotSize'> & {
+  price: number
+  bathrooms: number
+  hoaFee: number | null
+  taxAmount: number | null
+  lotSize: number | null
+}
+
 interface PropertyCardProps {
-  listing: Listing
+  listing: SerializedListing
 }
 
 export function PropertyCard({ listing }: PropertyCardProps) {
@@ -111,7 +120,7 @@ export function PropertyCard({ listing }: PropertyCardProps) {
           </div>
           <div className="flex items-center gap-1">
             <Bath className="h-4 w-4" />
-            <span>{Number(listing.bathrooms)}</span>
+            <span>{listing.bathrooms}</span>
           </div>
           <div className="flex items-center gap-1">
             <Square className="h-4 w-4" />

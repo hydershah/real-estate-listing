@@ -52,20 +52,6 @@ export function StepDetails() {
 
       <FormField
         control={control}
-        name="lotSize"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Lot Size (sq ft)</FormLabel>
-            <FormControl>
-              <Input type="number" min="0" {...field} value={field.value ?? ''} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={control}
         name="yearBuilt"
         render={({ field }) => (
           <FormItem>
