@@ -14,7 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { StepBasics } from './step-basics'
 import { StepLocation } from './step-location'
 import { StepDetails } from './step-details'
 import { StepFeatures } from './step-features'
@@ -25,7 +24,6 @@ import { toast } from 'sonner'
 import { Home, MapPin, Bed, Bath, Ruler, DollarSign, Calendar, Building, Tag, X } from 'lucide-react'
 
 const STEPS = [
-  { id: 'basics', title: 'Basics' },
   { id: 'location', title: 'Location' },
   { id: 'details', title: 'Details' },
   { id: 'features', title: 'Features' },
@@ -100,21 +98,18 @@ export function ListingForm({ initialData }: ListingFormProps) {
   const nextStep = async () => {
     // Validate current step fields before moving
     let fieldsToValidate: (keyof ListingFormData)[] = []
-    
+
     switch (currentStep) {
-      case 0: // Basics
-        fieldsToValidate = ['propertyType']
+      case 0: // Location (includes property type)
+        fieldsToValidate = ['propertyType', 'address', 'city', 'state', 'zipCode']
         break
-      case 1: // Location
-        fieldsToValidate = ['address', 'city', 'state', 'zipCode']
-        break
-      case 2: // Details
+      case 1: // Details
         fieldsToValidate = ['bedrooms', 'bathrooms', 'squareFeet']
         break
-      case 3: // Features
+      case 2: // Features
         // Features are optional, no required validation
         break
-      case 4: // Pricing
+      case 3: // Pricing
         fieldsToValidate = ['price']
         break
     }
@@ -209,11 +204,10 @@ export function ListingForm({ initialData }: ListingFormProps) {
               <CardTitle>{STEPS[currentStep].title}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {currentStep === 0 && <StepBasics />}
-              {currentStep === 1 && <StepLocation />}
-              {currentStep === 2 && <StepDetails />}
-              {currentStep === 3 && <StepFeatures />}
-              {currentStep === 4 && <StepPricing />}
+              {currentStep === 0 && <StepLocation />}
+              {currentStep === 1 && <StepDetails />}
+              {currentStep === 2 && <StepFeatures />}
+              {currentStep === 3 && <StepPricing />}
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button 
@@ -323,7 +317,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
                         {pendingData.listingType === 'FOR_RENT' ? 'per month' : 'listing price'}
                       </p>
                     </div>
-                    {pendingData.hoaFee && (
+                    {pendingData.hoaFee !== undefined && pendingData.hoaFee !== null && pendingData.hoaFee > 0 && (
                       <div>
                         <p className="text-lg font-semibold">{formatCurrency(pendingData.hoaFee)}</p>
                         <p className="text-xs text-muted-foreground">HOA / month</p>
@@ -348,7 +342,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
                           key={feature}
                           className="px-2 py-1 bg-muted rounded text-sm"
                         >
-                          {feature.replace(/_/g, ' ')}
+                          {feature.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                         </span>
                       ))}
                     </div>

@@ -73,11 +73,11 @@ export function ListingsTable({ listings }: ListingsTableProps) {
                     listing.status === 'SOLD' ? 'bg-blue-100 text-blue-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
-                    {listing.status}
+                    {listing.status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                   </span>
                 </TableCell>
                 <TableCell>${Number(listing.price).toLocaleString()}</TableCell>
-                <TableCell>{listing.propertyType.replace('_', ' ')}</TableCell>
+                <TableCell>{listing.propertyType.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}</TableCell>
                 <TableCell>{new Date(listing.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Link href={`/listings/${listing.id}`}>

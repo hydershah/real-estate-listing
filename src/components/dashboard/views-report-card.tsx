@@ -13,10 +13,10 @@ interface ViewsReportCardProps {
 }
 
 const defaultData: ViewsData[] = [
-  { label: 'MLS', value: 250, color: '#00D9A5' },
-  { label: 'Realtor.com', value: 100, color: '#3B82F6' },
-  { label: 'Redfin', value: 75, color: '#8B5CF6' },
-  { label: 'Zillow', value: 50, color: '#F59E0B' },
+  { label: 'MLS', value: 0, color: '#00D9A5' },
+  { label: 'Realtor.com', value: 0, color: '#3B82F6' },
+  { label: 'Redfin', value: 0, color: '#8B5CF6' },
+  { label: 'Zillow', value: 0, color: '#F59E0B' },
 ]
 
 export function ViewsReportCard({ data = defaultData }: ViewsReportCardProps) {

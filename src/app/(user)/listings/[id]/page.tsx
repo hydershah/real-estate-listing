@@ -64,7 +64,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               listing.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' :
               'bg-muted text-muted-foreground'
             }`}>
-              {listing.status}
+              {listing.status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
             </span>
           </div>
 
@@ -100,7 +100,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               <div className="flex flex-wrap gap-2">
                 {(listing.features as string[])?.map((feature, i) => (
                   <span key={i} className="px-2 py-1 bg-primary/20 text-primary rounded text-sm">
-                    {feature.replace('_', ' ')}
+                    {feature.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                   </span>
                 ))}
               </div>

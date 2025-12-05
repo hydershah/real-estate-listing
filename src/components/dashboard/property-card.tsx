@@ -76,7 +76,7 @@ export function PropertyCard({ listing }: PropertyCardProps) {
 
         {/* Status Badge */}
         <Badge className={`absolute top-3 left-3 ${statusColors[listing.status] || statusColors.DRAFT}`}>
-          {listing.status.replace('_', ' ')}
+          {listing.status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
         </Badge>
 
         {/* Quick Actions Overlay */}
@@ -132,7 +132,7 @@ export function PropertyCard({ listing }: PropertyCardProps) {
       {/* Footer Actions */}
       <div className="flex items-center justify-between border-t border-border px-4 py-3">
         <span className="text-xs text-muted-foreground">
-          {listing.propertyType.replace('_', ' ')}
+          {listing.propertyType.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
         </span>
         <Button
           variant="ghost"

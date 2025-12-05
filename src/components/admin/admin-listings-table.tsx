@@ -71,11 +71,11 @@ export function AdminListingsTable({ listings }: AdminListingsTableProps) {
                     listing.status === 'SOLD' ? 'bg-blue-500/20 text-blue-400' :
                     'bg-muted text-muted-foreground'
                   }`}>
-                    {listing.status}
+                    {listing.status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                   </span>
                 </TableCell>
                 <TableCell>${Number(listing.price).toLocaleString()}</TableCell>
-                <TableCell>{listing.propertyType.replace('_', ' ')}</TableCell>
+                <TableCell>{listing.propertyType.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}</TableCell>
                 <TableCell>{new Date(listing.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Link href={`/listings/${listing.id}`}>

@@ -58,14 +58,14 @@ export default async function DashboardPage() {
     projectedSavings += dollarSaved
   })
 
-  projectedSavings = Math.round(projectedSavings) || 10801 // Default for demo
+  projectedSavings = Math.round(projectedSavings)
 
   // Sample views data - in a real app this would come from analytics
   const viewsData = [
-    { label: 'MLS', value: 250, color: '#00D9A5' },
-    { label: 'Realtor.com', value: 100, color: '#3B82F6' },
-    { label: 'Redfin', value: 75, color: '#8B5CF6' },
-    { label: 'Zillow', value: 50, color: '#F59E0B' },
+    { label: 'MLS', value: 0, color: '#00D9A5' },
+    { label: 'Realtor.com', value: 0, color: '#3B82F6' },
+    { label: 'Redfin', value: 0, color: '#8B5CF6' },
+    { label: 'Zillow', value: 0, color: '#F59E0B' },
   ]
 
   // Aggregate showings and offers from all listings
