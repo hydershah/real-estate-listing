@@ -40,7 +40,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           {/* Photos Placeholder */}
           <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
             {listing.photos.length > 0 ? (
-              <img src={listing.photos[0]} alt={listing.title} className="w-full h-full object-cover rounded-lg" />
+              <img src={listing.photos[0]} alt={listing.title ?? "Property"} className="w-full h-full object-cover rounded-lg" />
             ) : (
               <span className="text-muted-foreground">No photos</span>
             )}

@@ -24,7 +24,7 @@ export async function GET() {
   const csvRows = listings.map(listing => {
     return [
       listing.id,
-      `"${listing.title.replace(/"/g, '""')}"`,
+      `"${(listing.title ?? '').replace(/"/g, '""')}"`,
       listing.status,
       listing.price,
       listing.propertyType,

@@ -16,8 +16,16 @@ import { deleteListing } from "@/app/actions/listings"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
+type SerializedListing = Omit<Listing, 'price' | 'bathrooms' | 'hoaFee' | 'taxAmount' | 'lotSize'> & {
+  price: number
+  bathrooms: number
+  hoaFee: number | null
+  taxAmount: number | null
+  lotSize: number | null
+}
+
 interface ListingsTableProps {
-  listings: Listing[]
+  listings: SerializedListing[]
 }
 
 export function ListingsTable({ listings }: ListingsTableProps) {

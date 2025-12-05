@@ -22,7 +22,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   // Prisma Decimal to number, null to undefined, etc.
   const initialData = {
     id: listing.id,
-    title: listing.title,
+    title: listing.title ?? undefined,
     propertyType: listing.propertyType,
     listingType: listing.listingType,
     status: listing.status,
