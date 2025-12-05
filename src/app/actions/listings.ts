@@ -20,17 +20,21 @@ export async function createListing(data: ListingFormData) {
   }
 
   try {
+    // Generate title from address if not provided
+    const listingData = {
+      ...validatedFields.data,
+      title: validatedFields.data.title || validatedFields.data.address,
+      userId: session.user.id,
+      status: 'PENDING_REVIEW' as const,
+    }
+
     const listing = await prisma.listing.create({
-      data: {
-        ...validatedFields.data,
-        userId: session.user.id,
-        status: 'DRAFT',
-      },
+      data: listingData,
     })
 
     // Send email notifications to user and admin
     sendListingCreatedEmails({
-      listingTitle: listing.title,
+      listingTitle: listing.address, // Use address instead of title
       listingAddress: listing.address,
       listingCity: listing.city,
       listingState: listing.state,

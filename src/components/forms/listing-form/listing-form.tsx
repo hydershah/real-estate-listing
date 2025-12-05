@@ -18,19 +18,17 @@ import { StepBasics } from './step-basics'
 import { StepLocation } from './step-location'
 import { StepDetails } from './step-details'
 import { StepFeatures } from './step-features'
-import { StepPhotos } from './step-photos'
 import { StepPricing } from './step-pricing'
 import { createListing, updateListing } from '@/app/actions/listings'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Home, MapPin, Bed, Bath, Ruler, DollarSign, Calendar, Building, Tag } from 'lucide-react'
+import { Home, MapPin, Bed, Bath, Ruler, DollarSign, Calendar, Building, Tag, X } from 'lucide-react'
 
 const STEPS = [
   { id: 'basics', title: 'Basics' },
   { id: 'location', title: 'Location' },
   { id: 'details', title: 'Details' },
   { id: 'features', title: 'Features' },
-  { id: 'photos', title: 'Photos' },
   { id: 'pricing', title: 'Pricing' },
 ]
 
@@ -66,6 +64,7 @@ const formatCurrency = (value: number) => {
 export function ListingForm({ initialData }: ListingFormProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showExitDialog, setShowExitDialog] = useState(false)
   const [pendingData, setPendingData] = useState<ListingFormData | null>(null)
   const router = useRouter()
   
@@ -75,6 +74,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
       title: '',
       propertyType: 'SINGLE_FAMILY',
       listingType: 'FOR_SALE',
+      listingPackage: undefined,
       address: '',
       unitNumber: '',
       city: '',
@@ -85,7 +85,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
       squareFeet: 0,
       lotSize: undefined,
       yearBuilt: undefined,
-      features: [],
+      features: ['other_features'],
       photos: [],
       description: '',
       price: 0,
@@ -103,7 +103,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
     
     switch (currentStep) {
       case 0: // Basics
-        fieldsToValidate = ['title', 'propertyType', 'listingType']
+        fieldsToValidate = ['propertyType']
         break
       case 1: // Location
         fieldsToValidate = ['address', 'city', 'state', 'zipCode']
@@ -114,10 +114,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
       case 3: // Features
         // Features are optional, no required validation
         break
-      case 4: // Photos
-        // Photos are optional, no required validation
-        break
-      case 5: // Pricing
+      case 4: // Pricing
         fieldsToValidate = ['price']
         break
     }
@@ -171,6 +168,19 @@ export function ListingForm({ initialData }: ListingFormProps) {
   return (
     <FormProvider {...methods}>
       <div className="max-w-3xl mx-auto py-8">
+        {/* Header with Exit Button */}
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-bold">{initialData?.id ? 'Edit Listing' : 'Create Listing'}</h1>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowExitDialog(true)}
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
@@ -203,8 +213,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
               {currentStep === 1 && <StepLocation />}
               {currentStep === 2 && <StepDetails />}
               {currentStep === 3 && <StepFeatures />}
-              {currentStep === 4 && <StepPhotos />}
-              {currentStep === 5 && <StepPricing />}
+              {currentStep === 4 && <StepPricing />}
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button 
@@ -218,7 +227,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
               
               {currentStep === STEPS.length - 1 ? (
                 <Button key="submit-btn" type="submit" disabled={isSubmitting}>
-                  {initialData?.id ? 'Update Listing' : 'Create Listing'}
+                  {initialData?.id ? 'Update Listing' : 'Save & Continue'}
                 </Button>
               ) : (
                 <Button key="next-btn" type="button" onClick={nextStep}>
@@ -238,15 +247,15 @@ export function ListingForm({ initialData }: ListingFormProps) {
                 {initialData?.id ? 'Confirm Listing Update' : 'Confirm New Listing'}
               </DialogTitle>
               <DialogDescription>
-                Please review your listing details before {initialData?.id ? 'updating' : 'submitting'}.
+                Please review your listing before submitting. You can make changes later on.
               </DialogDescription>
             </DialogHeader>
 
             {pendingData && (
               <div className="space-y-6 py-4">
-                {/* Title & Type */}
+                {/* Address & Type */}
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-lg border-b pb-2">{pendingData.title}</h3>
+                  <h3 className="font-semibold text-lg border-b pb-2">{pendingData.address}, {pendingData.city}</h3>
                   <div className="flex flex-wrap gap-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                       <Building className="h-3.5 w-3.5" />
@@ -394,7 +403,34 @@ export function ListingForm({ initialData }: ListingFormProps) {
                 onClick={handleConfirmSubmit}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : (initialData?.id ? 'Confirm Update' : 'Confirm & Create')}
+                {isSubmitting ? 'Submitting...' : (initialData?.id ? 'Confirm Update' : 'Submit for Review')}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* Exit Confirmation Dialog */}
+        <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Leave Create Listing?</DialogTitle>
+              <DialogDescription>
+                Are you sure? Your progress will be lost.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowExitDialog(false)}
+              >
+                Stay
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => router.push('/dashboard')}
+              >
+                Leave
               </Button>
             </DialogFooter>
           </DialogContent>

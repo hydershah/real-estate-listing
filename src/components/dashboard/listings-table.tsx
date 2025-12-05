@@ -40,7 +40,7 @@ export function ListingsTable({ listings }: ListingsTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead>
+            <TableHead>Address</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Type</TableHead>
@@ -58,7 +58,7 @@ export function ListingsTable({ listings }: ListingsTableProps) {
           ) : (
             listings.map((listing) => (
               <TableRow key={listing.id}>
-                <TableCell className="font-medium">{listing.title}</TableCell>
+                <TableCell className="font-medium">{listing.address}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     listing.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :

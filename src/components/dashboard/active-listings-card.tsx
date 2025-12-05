@@ -15,14 +15,14 @@ export function ActiveListingsCard({ activeCount, pendingCount }: ActiveListings
         Active Listings:
       </p>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center justify-between gap-4">
         {/* Active Count */}
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <Home className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-3xl font-bold text-primary">{activeCount}</p>
+            <p className="text-2xl font-bold text-primary">{activeCount}</p>
             <p className="text-xs text-muted-foreground">Active</p>
           </div>
         </div>
@@ -36,7 +36,7 @@ export function ActiveListingsCard({ activeCount, pendingCount }: ActiveListings
             <Clock className="h-5 w-5 text-chart-4" />
           </div>
           <div>
-            <p className="text-3xl font-bold text-chart-4">{pendingCount}</p>
+            <p className="text-2xl font-bold text-chart-4">{pendingCount}</p>
             <p className="text-xs text-muted-foreground">Pending</p>
           </div>
         </div>

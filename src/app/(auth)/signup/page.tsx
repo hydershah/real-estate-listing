@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 
 export default function SignupPage() {
   const [state, action, isPending] = useActionState(signup, undefined)
@@ -16,10 +17,7 @@ export default function SignupPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 md:p-6">
-        <Link href="/" className="flex items-center">
-          <span className="text-xl font-bold text-primary">LIST</span>
-          <span className="text-xl font-bold text-foreground">CLOSE</span>
-        </Link>
+        <Logo href="/" />
         <ThemeToggle />
       </header>
 

@@ -1,13 +1,16 @@
 import { z } from "zod"
 
+export const listingPackageEnum = z.enum(["SMART_SELLER", "FULL_SERVICE_AGENT"])
+
 export const listingSchema = z.object({
   // Basics
-  title: z.string().min(5, "Title must be at least 5 characters"),
+  title: z.string().optional(),
   propertyType: z.enum([
     "SINGLE_FAMILY", "CONDO", "TOWNHOUSE", "MULTI_FAMILY",
     "APARTMENT", "LAND", "COMMERCIAL", "MOBILE"
   ]),
-  listingType: z.enum(["FOR_SALE", "FOR_RENT"]),
+  listingType: z.enum(["FOR_SALE", "FOR_RENT"]).default("FOR_SALE"),
+  listingPackage: listingPackageEnum.optional(),
   status: z.enum(["DRAFT", "PENDING_REVIEW", "ACTIVE", "PENDING_SALE", "SOLD", "EXPIRED"]).default("DRAFT"),
 
   // Location
@@ -50,3 +53,4 @@ export const listingSchema = z.object({
 })
 
 export type ListingFormData = z.infer<typeof listingSchema>
+export type ListingPackage = z.infer<typeof listingPackageEnum>

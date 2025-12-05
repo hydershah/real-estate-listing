@@ -13,10 +13,10 @@ interface ViewsReportCardProps {
 }
 
 const defaultData: ViewsData[] = [
-  { label: 'Direct Views', value: 250, color: '#00D9A5' },
-  { label: 'Search Views', value: 100, color: '#3B82F6' },
-  { label: 'Social Media', value: 75, color: '#8B5CF6' },
-  { label: 'Referrals', value: 50, color: '#F59E0B' },
+  { label: 'MLS', value: 250, color: '#00D9A5' },
+  { label: 'Realtor.com', value: 100, color: '#3B82F6' },
+  { label: 'Redfin', value: 75, color: '#8B5CF6' },
+  { label: 'Zillow', value: 50, color: '#F59E0B' },
 ]
 
 export function ViewsReportCard({ data = defaultData }: ViewsReportCardProps) {
@@ -62,7 +62,7 @@ export function ViewsReportCard({ data = defaultData }: ViewsReportCardProps) {
         Views Report:
       </p>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         {/* Pie Chart */}
         <div className="relative flex-shrink-0">
           <svg width="140" height="140" viewBox="0 0 140 140">

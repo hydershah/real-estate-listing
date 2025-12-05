@@ -64,7 +64,7 @@ export function PropertyCard({ listing }: PropertyCardProps) {
         {hasPhoto ? (
           <Image
             src={listing.photos[0]}
-            alt={listing.title}
+            alt={listing.address}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -101,9 +101,9 @@ export function PropertyCard({ listing }: PropertyCardProps) {
         {/* Price */}
         <p className="text-xl font-bold text-primary mb-1">{formattedPrice}</p>
 
-        {/* Title */}
+        {/* Address */}
         <h3 className="font-semibold text-foreground truncate mb-2">
-          {listing.title}
+          {listing.address}
         </h3>
 
         {/* Location */}

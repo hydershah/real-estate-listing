@@ -37,6 +37,11 @@ enum ListingType {
   FOR_RENT
 }
 
+enum ListingPackage {
+  SMART_SELLER
+  FULL_SERVICE_AGENT
+}
+
 model User {
   id        String    @id @default(cuid())
   email     String    @unique
@@ -61,13 +66,14 @@ model PasswordResetToken {
 
 model Listing {
   id          String        @id @default(cuid())
-  title       String
-  description String        @db.Text
+  title       String?
+  description String?       @db.Text
   status      ListingStatus @default(DRAFT)
-  
+
   // Basics
   propertyType PropertyType
-  listingType  ListingType
+  listingType  ListingType   @default(FOR_SALE)
+  listingPackage ListingPackage?
   price        Decimal      @db.Decimal(12, 2)
   
   // Location
@@ -98,7 +104,11 @@ model Listing {
   // Financial
   hoaFee      Decimal?      @db.Decimal(10, 2)
   taxAmount   Decimal?      @db.Decimal(10, 2)
-  
+
+  // Metrics (manually updated)
+  scheduledShowings Int     @default(0)
+  offersReceived    Int     @default(0)
+
   // Relations
   userId      String
   user        User          @relation(fields: [userId], references: [id])

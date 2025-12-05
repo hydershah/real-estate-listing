@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ListingFormData } from '@/types/listing'
 
@@ -13,7 +13,7 @@ const FEATURES = [
   { id: 'basement', label: 'Basement' },
   { id: 'patio', label: 'Deck/Patio' },
   { id: 'fenced', label: 'Fenced Yard' },
-  { id: 'smart_home', label: 'Smart Home' },
+  { id: 'other_features', label: 'Other Features' },
 ]
 
 export function StepFeatures() {
@@ -48,9 +48,16 @@ export function StepFeatures() {
                       }}
                     />
                   </FormControl>
-                  <FormLabel className="font-normal">
-                    {feature.label}
-                  </FormLabel>
+                  <div className="flex flex-col">
+                    <FormLabel className="font-normal">
+                      {feature.label}
+                    </FormLabel>
+                    {feature.id === 'other_features' && (
+                      <span className="text-xs text-muted-foreground">
+                        We&apos;ll confirm with you.
+                      </span>
+                    )}
+                  </div>
                 </FormItem>
               )
             }}

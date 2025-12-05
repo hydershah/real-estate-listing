@@ -6,8 +6,10 @@ import { prisma } from "@/lib/prisma"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { ProjectedSavingsCard } from "@/components/dashboard/projected-savings-card"
 import { ActiveListingsCard } from "@/components/dashboard/active-listings-card"
-import { PropertyCard } from "@/components/dashboard/property-card"
+import { ListingsTable } from "@/components/dashboard/listings-table"
 import { ViewsReportCard } from "@/components/dashboard/views-report-card"
+import { ScheduledShowingsCard } from "@/components/dashboard/scheduled-showings-card"
+import { OffersReceivedCard } from "@/components/dashboard/offers-received-card"
 import { Plus } from "lucide-react"
 
 export default async function DashboardPage() {
@@ -42,19 +44,33 @@ export default async function DashboardPage() {
     l.status === 'PENDING_REVIEW' || l.status === 'PENDING_SALE'
   ).length
 
-  // Calculate projected savings (example: 3% commission savings on active listings)
-  const totalActiveValue = listings
-    .filter(l => l.status === 'ACTIVE')
-    .reduce((sum, l) => sum + Number(l.price), 0)
-  const projectedSavings = Math.round(totalActiveValue * 0.03) || 10801 // Default for demo
+  // Calculate projected savings based on listing package
+  // Dollar_Saved = (0.03 - LC_Rate) * Home_Price
+  // LC_Rate = 0.01 for Smart Seller, 0.02 for Full-Service Agent
+  const activeListingsData = listings.filter(l => l.status === 'ACTIVE')
+  let projectedSavings = 0
+
+  activeListingsData.forEach(listing => {
+    const price = Number(listing.price)
+    // Default to 2% rate if no package selected
+    const lcRate = listing.listingPackage === 'SMART_SELLER' ? 0.01 : 0.02
+    const dollarSaved = (0.03 - lcRate) * price
+    projectedSavings += dollarSaved
+  })
+
+  projectedSavings = Math.round(projectedSavings) || 10801 // Default for demo
 
   // Sample views data - in a real app this would come from analytics
   const viewsData = [
-    { label: 'Direct Views', value: 250, color: '#00D9A5' },
-    { label: 'Search Views', value: 100, color: '#3B82F6' },
-    { label: 'Social Media', value: 75, color: '#8B5CF6' },
-    { label: 'Referrals', value: 50, color: '#F59E0B' },
+    { label: 'MLS', value: 250, color: '#00D9A5' },
+    { label: 'Realtor.com', value: 100, color: '#3B82F6' },
+    { label: 'Redfin', value: 75, color: '#8B5CF6' },
+    { label: 'Zillow', value: 50, color: '#F59E0B' },
   ]
+
+  // Aggregate showings and offers from all listings
+  const totalShowings = listings.reduce((sum, l) => sum + (l.scheduledShowings || 0), 0)
+  const totalOffers = listings.reduce((sum, l) => sum + (l.offersReceived || 0), 0)
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,6 +100,12 @@ export default async function DashboardPage() {
 
           {/* Views Report */}
           <ViewsReportCard data={viewsData} />
+
+          {/* Scheduled Showings */}
+          <ScheduledShowingsCard count={totalShowings} />
+
+          {/* Offers Received */}
+          <OffersReceivedCard count={totalOffers} />
         </div>
 
         {/* Listings Section */}
@@ -100,7 +122,7 @@ export default async function DashboardPage() {
             <Link href="/listings/new">
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Create Listing</span>
+                <span className="hidden sm:inline">+ New Listing</span>
                 <span className="sm:hidden">New</span>
               </Button>
             </Link>
@@ -125,11 +147,7 @@ export default async function DashboardPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-              {listings.map((listing) => (
-                <PropertyCard key={listing.id} listing={listing} />
-              ))}
-            </div>
+            <ListingsTable listings={listings} />
           )}
         </div>
       </main>

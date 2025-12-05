@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -29,13 +30,10 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <div className="flex items-center">
-            <span className="text-xl font-bold text-primary">LIST</span>
-            <span className="text-xl font-bold text-foreground">CLOSE</span>
-            <span className="ml-2 text-xs font-medium bg-primary text-primary-foreground px-2 py-0.5 rounded">ADMIN</span>
-          </div>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Logo href="/admin/dashboard" />
+          <span className="text-xs font-medium bg-primary text-primary-foreground px-2 py-0.5 rounded">ADMIN</span>
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
