@@ -1,14 +1,24 @@
 import { z } from "zod"
 
+export const listingPackageEnum = z.enum(["SMART_SELLER", "FULL_SERVICE_AGENT"])
+
+// Helper for optional number fields from form inputs
+const optionalNumber = z.union([z.number(), z.string(), z.undefined()])
+  .transform((val) => {
+    if (val === undefined || val === '') return undefined
+    return typeof val === 'number' ? val : Number(val)
+  })
+
 export const listingSchema = z.object({
   // Basics
-  title: z.string().min(5, "Title must be at least 5 characters"),
+  title: z.string().optional(),
   propertyType: z.enum([
     "SINGLE_FAMILY", "CONDO", "TOWNHOUSE", "MULTI_FAMILY",
     "APARTMENT", "LAND", "COMMERCIAL", "MOBILE"
   ]),
-  listingType: z.enum(["FOR_SALE", "FOR_RENT"]),
-  status: z.enum(["DRAFT", "PENDING_REVIEW", "ACTIVE", "PENDING_SALE", "SOLD", "EXPIRED"]).default("DRAFT"),
+  listingType: z.enum(["FOR_SALE", "FOR_RENT"]).default("FOR_SALE"),
+  listingPackage: listingPackageEnum.default("SMART_SELLER"),
+  status: z.enum(["DRAFT", "PENDING_REVIEW", "ACTIVE", "PENDING_SALE", "SOLD", "EXPIRED"]).default("PENDING_REVIEW"),
 
   // Location
   address: z.string().min(5, "Address is required"),
@@ -21,32 +31,21 @@ export const listingSchema = z.object({
   bedrooms: z.coerce.number().min(0),
   bathrooms: z.coerce.number().min(0),
   squareFeet: z.coerce.number().min(0),
-  lotSize: z.preprocess(
-    (val) => (val === "" || val === undefined || val === null ? undefined : Number(val)),
-    z.number().min(0).optional()
-  ),
-  yearBuilt: z.preprocess(
-    (val) => (val === "" || val === undefined || val === null ? undefined : Number(val)),
-    z.number().min(1800).max(new Date().getFullYear() + 1).optional()
-  ),
+  lotSize: optionalNumber,
+  yearBuilt: optionalNumber,
 
   // Features
   features: z.array(z.string()).default([]),
-  description: z.string().default(""),
+  description: z.string().optional(),
 
-  // Media
+  // Media (photos handled by ListClose team)
   photos: z.array(z.string()).default([]),
 
   // Financial
   price: z.coerce.number().min(0),
-  hoaFee: z.preprocess(
-    (val) => (val === "" || val === undefined || val === null ? undefined : Number(val)),
-    z.number().min(0).optional()
-  ),
-  taxAmount: z.preprocess(
-    (val) => (val === "" || val === undefined || val === null ? undefined : Number(val)),
-    z.number().min(0).optional()
-  ),
+  hoaFee: optionalNumber,
+  taxAmount: optionalNumber,
 })
 
 export type ListingFormData = z.infer<typeof listingSchema>
+export type ListingPackage = z.infer<typeof listingPackageEnum>

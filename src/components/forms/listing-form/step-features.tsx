@@ -13,7 +13,7 @@ const FEATURES = [
   { id: 'basement', label: 'Basement' },
   { id: 'patio', label: 'Deck/Patio' },
   { id: 'fenced', label: 'Fenced Yard' },
-  { id: 'smart_home', label: 'Smart Home' },
+  { id: 'other', label: "Other Features (we'll confirm with you)" },
 ]
 
 export function StepFeatures() {

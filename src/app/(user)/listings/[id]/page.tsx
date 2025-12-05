@@ -40,7 +40,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           {/* Photos Placeholder */}
           <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-4">
             {listing.photos.length > 0 ? (
-              <img src={listing.photos[0]} alt={listing.title} className="w-full h-full object-cover rounded-lg" />
+              <img src={listing.photos[0]} alt={listing.address} className="w-full h-full object-cover rounded-lg" />
             ) : (
               <span className="text-muted-foreground">No photos</span>
             )}
@@ -57,14 +57,15 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         <div>
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{listing.title}</h1>
+              <h1 className="text-3xl font-bold mb-2">{listing.title || listing.address}</h1>
               <p className="text-xl text-muted-foreground">${Number(listing.price).toLocaleString()}</p>
             </div>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               listing.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' :
+              listing.status === 'PENDING_REVIEW' ? 'bg-yellow-500/20 text-yellow-600' :
               'bg-muted text-muted-foreground'
             }`}>
-              {listing.status}
+              {listing.status.replace('_', ' ')}
             </span>
           </div>
 
@@ -90,10 +91,12 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               <p>{listing.city}, {listing.state} {listing.zipCode}</p>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-2">Description</h3>
-              <p className="text-muted-foreground whitespace-pre-wrap">{listing.description}</p>
-            </div>
+            {listing.description && (
+              <div>
+                <h3 className="font-semibold mb-2">Description</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">{listing.description}</p>
+              </div>
+            )}
 
             <div>
               <h3 className="font-semibold mb-2">Features</h3>

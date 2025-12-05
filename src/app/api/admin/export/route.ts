@@ -22,9 +22,10 @@ export async function GET() {
 
   const csvHeader = "ID,Title,Status,Price,Type,Address,City,State,Zip,User Email,Created At\n"
   const csvRows = listings.map(listing => {
+    const title = listing.title || listing.address
     return [
       listing.id,
-      `"${listing.title.replace(/"/g, '""')}"`,
+      `"${title.replace(/"/g, '""')}"`,
       listing.status,
       listing.price,
       listing.propertyType,

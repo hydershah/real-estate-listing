@@ -20,17 +20,21 @@ export async function createListing(data: ListingFormData) {
   }
 
   try {
+    // Auto-generate title from street address only (not city, state, zip)
+    const title = validatedFields.data.title || validatedFields.data.address
+
     const listing = await prisma.listing.create({
       data: {
         ...validatedFields.data,
+        title,
         userId: session.user.id,
-        status: 'DRAFT',
+        status: 'PENDING_REVIEW',
       },
     })
 
     // Send email notifications to user and admin
     sendListingCreatedEmails({
-      listingTitle: listing.title,
+      listingTitle: listing.title || listing.address,
       listingAddress: listing.address,
       listingCity: listing.city,
       listingState: listing.state,
@@ -52,7 +56,7 @@ export async function createListing(data: ListingFormData) {
 
 export async function deleteListing(listingId: string) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { error: 'Unauthorized' }
   }
@@ -84,7 +88,7 @@ export async function deleteListing(listingId: string) {
 
 export async function updateListing(id: string, data: ListingFormData) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { error: 'Unauthorized' }
   }
@@ -98,7 +102,7 @@ export async function updateListing(id: string, data: ListingFormData) {
   try {
     const listing = await prisma.listing.findUnique({ where: { id } })
     if (!listing) return { error: 'Not found' }
-    
+
     if (listing.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
@@ -107,7 +111,7 @@ export async function updateListing(id: string, data: ListingFormData) {
       where: { id },
       data: validatedFields.data,
     })
-    
+
     revalidatePath('/dashboard')
     revalidatePath(`/listings/${id}`)
     return { success: true }

@@ -19,15 +19,17 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   }
 
   // Transform listing data to match form schema if needed
-  // Prisma Decimal to number, null to undefined, etc.
+  // Prisma Decimal to number, null to undefined
   const initialData = {
     id: listing.id,
-    title: listing.title,
+    title: listing.title ?? undefined,
+    description: listing.description ?? undefined,
     propertyType: listing.propertyType,
     listingType: listing.listingType,
+    listingPackage: listing.listingPackage,
     status: listing.status,
     address: listing.address,
-    unitNumber: listing.unitNumber ?? '',
+    unitNumber: listing.unitNumber ?? undefined,
     city: listing.city,
     state: listing.state,
     zipCode: listing.zipCode,
@@ -36,12 +38,11 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
     squareFeet: listing.squareFeet,
     lotSize: listing.lotSize ? Number(listing.lotSize) : undefined,
     yearBuilt: listing.yearBuilt ?? undefined,
-    features: (listing.features as string[]) ?? [],
-    description: listing.description ?? "",
-    photos: listing.photos ?? [],
     price: Number(listing.price),
     hoaFee: listing.hoaFee ? Number(listing.hoaFee) : undefined,
     taxAmount: listing.taxAmount ? Number(listing.taxAmount) : undefined,
+    features: (listing.features as string[]) || [],
+    photos: listing.photos || [],
   }
 
   return (

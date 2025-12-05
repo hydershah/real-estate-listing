@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, FormProvider, Resolver } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { listingSchema, type ListingFormData } from '@/types/listing'
 import { Button } from '@/components/ui/button'
@@ -18,19 +18,18 @@ import { StepBasics } from './step-basics'
 import { StepLocation } from './step-location'
 import { StepDetails } from './step-details'
 import { StepFeatures } from './step-features'
-import { StepPhotos } from './step-photos'
 import { StepPricing } from './step-pricing'
 import { createListing, updateListing } from '@/app/actions/listings'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Home, MapPin, Bed, Bath, Ruler, DollarSign, Calendar, Building, Tag } from 'lucide-react'
+import Link from 'next/link'
+import { Home, MapPin, Bed, Bath, Ruler, DollarSign, Calendar, Building, X } from 'lucide-react'
 
 const STEPS = [
   { id: 'basics', title: 'Basics' },
   { id: 'location', title: 'Location' },
   { id: 'details', title: 'Details' },
   { id: 'features', title: 'Features' },
-  { id: 'photos', title: 'Photos' },
   { id: 'pricing', title: 'Pricing' },
 ]
 
@@ -49,9 +48,9 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
   MOBILE: 'Mobile Home',
 }
 
-const LISTING_TYPE_LABELS: Record<string, string> = {
-  FOR_SALE: 'For Sale',
-  FOR_RENT: 'For Rent',
+const PACKAGE_LABELS: Record<string, string> = {
+  SMART_SELLER: 'Smart Seller (1%)',
+  FULL_SERVICE_AGENT: 'Full-Service Agent (2%)',
 }
 
 const formatCurrency = (value: number) => {
@@ -68,29 +67,16 @@ export function ListingForm({ initialData }: ListingFormProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingData, setPendingData] = useState<ListingFormData | null>(null)
   const router = useRouter()
-  
+
   const methods = useForm<ListingFormData>({
-    resolver: zodResolver(listingSchema) as Resolver<ListingFormData>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(listingSchema) as any,
     defaultValues: initialData || {
-      title: '',
       propertyType: 'SINGLE_FAMILY',
       listingType: 'FOR_SALE',
-      address: '',
-      unitNumber: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      bedrooms: 0,
-      bathrooms: 0,
-      squareFeet: 0,
-      lotSize: undefined,
-      yearBuilt: undefined,
-      features: [],
+      listingPackage: 'SMART_SELLER',
+      features: ['other'],
       photos: [],
-      description: '',
-      price: 0,
-      hoaFee: undefined,
-      taxAmount: undefined,
     },
     mode: 'onChange',
   })
@@ -100,10 +86,10 @@ export function ListingForm({ initialData }: ListingFormProps) {
   const nextStep = async () => {
     // Validate current step fields before moving
     let fieldsToValidate: (keyof ListingFormData)[] = []
-    
+
     switch (currentStep) {
       case 0: // Basics
-        fieldsToValidate = ['title', 'propertyType', 'listingType']
+        fieldsToValidate = ['propertyType']
         break
       case 1: // Location
         fieldsToValidate = ['address', 'city', 'state', 'zipCode']
@@ -112,17 +98,14 @@ export function ListingForm({ initialData }: ListingFormProps) {
         fieldsToValidate = ['bedrooms', 'bathrooms', 'squareFeet']
         break
       case 3: // Features
-        // Features are optional, no required validation
+        // No required validation for features
         break
-      case 4: // Photos
-        // Photos are optional, no required validation
-        break
-      case 5: // Pricing
-        fieldsToValidate = ['price']
+      case 4: // Pricing
+        fieldsToValidate = ['price', 'listingPackage']
         break
     }
 
-    const isValid = await trigger(fieldsToValidate)
+    const isValid = fieldsToValidate.length === 0 || await trigger(fieldsToValidate)
     if (isValid) {
       setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1))
     }
@@ -154,7 +137,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
         setShowConfirmDialog(false)
         return
       }
-      toast.success(initialData?.id ? 'Listing updated!' : 'Listing created!')
+      toast.success(initialData?.id ? 'Listing updated!' : 'Listing submitted for review!')
       setShowConfirmDialog(false)
       router.push('/dashboard')
     } catch (error) {
@@ -171,11 +154,21 @@ export function ListingForm({ initialData }: ListingFormProps) {
   return (
     <FormProvider {...methods}>
       <div className="max-w-3xl mx-auto py-8">
+        {/* Exit Button */}
+        <div className="flex justify-end mb-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
+              <X className="w-4 h-4 mr-2" />
+              Exit
+            </Button>
+          </Link>
+        </div>
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
             {STEPS.map((step, index) => (
-              <div 
+              <div
                 key={step.id}
                 className={`text-sm font-medium ${
                   index <= currentStep ? 'text-primary' : 'text-gray-400'
@@ -186,7 +179,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
             ))}
           </div>
           <div className="h-2 bg-gray-200 rounded-full">
-            <div 
+            <div
               className="h-full bg-primary rounded-full transition-all duration-300"
               style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%` }}
             />
@@ -203,25 +196,24 @@ export function ListingForm({ initialData }: ListingFormProps) {
               {currentStep === 1 && <StepLocation />}
               {currentStep === 2 && <StepDetails />}
               {currentStep === 3 && <StepFeatures />}
-              {currentStep === 4 && <StepPhotos />}
-              {currentStep === 5 && <StepPricing />}
+              {currentStep === 4 && <StepPricing />}
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
               >
                 Previous
               </Button>
-              
+
               {currentStep === STEPS.length - 1 ? (
-                <Button key="submit-btn" type="submit" disabled={isSubmitting}>
-                  {initialData?.id ? 'Update Listing' : 'Create Listing'}
+                <Button type="submit" disabled={isSubmitting}>
+                  {initialData?.id ? 'Update Listing' : 'Save & Continue'}
                 </Button>
               ) : (
-                <Button key="next-btn" type="button" onClick={nextStep}>
+                <Button type="button" onClick={nextStep}>
                   Next
                 </Button>
               )}
@@ -235,10 +227,10 @@ export function ListingForm({ initialData }: ListingFormProps) {
             <DialogHeader>
               <DialogTitle className="text-xl flex items-center gap-2">
                 <Home className="h-5 w-5 text-primary" />
-                {initialData?.id ? 'Confirm Listing Update' : 'Confirm New Listing'}
+                {initialData?.id ? 'Confirm Listing Update' : 'Review Your Listing'}
               </DialogTitle>
               <DialogDescription>
-                Please review your listing details before {initialData?.id ? 'updating' : 'submitting'}.
+                Please review your listing before submitting. You can make changes later on.
               </DialogDescription>
             </DialogHeader>
 
@@ -246,15 +238,16 @@ export function ListingForm({ initialData }: ListingFormProps) {
               <div className="space-y-6 py-4">
                 {/* Title & Type */}
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-lg border-b pb-2">{pendingData.title}</h3>
+                  <h3 className="font-semibold text-lg border-b pb-2">
+                    {pendingData.title || pendingData.address}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                       <Building className="h-3.5 w-3.5" />
                       {PROPERTY_TYPE_LABELS[pendingData.propertyType] || pendingData.propertyType}
                     </span>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                      <Tag className="h-3.5 w-3.5" />
-                      {LISTING_TYPE_LABELS[pendingData.listingType] || pendingData.listingType}
+                      {PACKAGE_LABELS[pendingData.listingPackage] || pendingData.listingPackage}
                     </span>
                   </div>
                 </div>
@@ -310,20 +303,12 @@ export function ListingForm({ initialData }: ListingFormProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <p className="text-2xl font-bold text-primary">{formatCurrency(pendingData.price)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {pendingData.listingType === 'FOR_RENT' ? 'per month' : 'listing price'}
-                      </p>
+                      <p className="text-xs text-muted-foreground">listing price</p>
                     </div>
                     {pendingData.hoaFee && (
                       <div>
                         <p className="text-lg font-semibold">{formatCurrency(pendingData.hoaFee)}</p>
                         <p className="text-xs text-muted-foreground">HOA / month</p>
-                      </div>
-                    )}
-                    {pendingData.taxAmount && (
-                      <div>
-                        <p className="text-lg font-semibold">{formatCurrency(pendingData.taxAmount)}</p>
-                        <p className="text-xs text-muted-foreground">Tax / year</p>
                       </div>
                     )}
                   </div>
@@ -342,28 +327,6 @@ export function ListingForm({ initialData }: ListingFormProps) {
                           {feature.replace(/_/g, ' ')}
                         </span>
                       ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Photos */}
-                {pendingData.photos && pendingData.photos.length > 0 && (
-                  <div>
-                    <p className="font-semibold mb-2">Photos ({pendingData.photos.length})</p>
-                    <div className="flex gap-2 overflow-x-auto pb-2">
-                      {pendingData.photos.slice(0, 4).map((photo, index) => (
-                        <img
-                          key={index}
-                          src={photo}
-                          alt={`Property ${index + 1}`}
-                          className="h-16 w-24 object-cover rounded border"
-                        />
-                      ))}
-                      {pendingData.photos.length > 4 && (
-                        <div className="h-16 w-24 rounded border bg-muted flex items-center justify-center text-sm text-muted-foreground">
-                          +{pendingData.photos.length - 4} more
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
@@ -394,7 +357,7 @@ export function ListingForm({ initialData }: ListingFormProps) {
                 onClick={handleConfirmSubmit}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : (initialData?.id ? 'Confirm Update' : 'Confirm & Create')}
+                {isSubmitting ? 'Submitting...' : 'Submit for Review'}
               </Button>
             </DialogFooter>
           </DialogContent>
