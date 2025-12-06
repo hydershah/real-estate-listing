@@ -1,10 +1,13 @@
 <svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Diamond/Arrow Icon -->
-  <path d="M4 20L16 8L28 20L16 32L4 20Z" fill="#00D9A5" opacity="0.6"/>
-  <path d="M10 20L22 8L34 20L22 32L10 20Z" fill="#00D9A5"/>
+  <!-- Upper chevron -->
+  <path d="M0 12L12 0L32 12L20 17L12 12L4 17L0 12Z" fill="#8DD4BE"/>
+  <path d="M4 17L12 12L20 17L32 12L20 20L4 17Z" fill="#8DD4BE"/>
+  <!-- Lower chevron -->
+  <path d="M4 23L20 20L32 28L20 40L12 28L4 23Z" fill="#8DD4BE"/>
+  <path d="M0 28L4 23L12 28L20 40L12 40L0 28Z" fill="#8DD4BE"/>
 
   <!-- LISTCLOSE Text -->
-  <text x="42" y="26" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700">
-    <tspan fill="#00D9A5">LIST</tspan><tspan fill="#FFFFFF">CLOSE</tspan>
+  <text x="40" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" letter-spacing="-0.5">
+    <tspan fill="#8DD4BE">LIST</tspan><tspan fill="#ffffff">CLOSE</tspan>
   </text>
 </svg>

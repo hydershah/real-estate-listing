@@ -9,15 +9,16 @@ interface LogoProps {
   href?: string
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  iconOnly?: boolean
 }
 
 const sizes = {
-  sm: { width: 120, height: 28 },
-  md: { width: 150, height: 36 },
-  lg: { width: 180, height: 40 },
+  sm: { icon: 24, text: 'text-lg' },
+  md: { icon: 32, text: 'text-xl' },
+  lg: { icon: 40, text: 'text-2xl' },
 }
 
-export function Logo({ href, className, size = 'md' }: LogoProps) {
+export function Logo({ href, className, size = 'md', iconOnly = false }: LogoProps) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const dimensions = sizes[size]
@@ -26,17 +27,24 @@ export function Logo({ href, className, size = 'md' }: LogoProps) {
     setMounted(true)
   }, [])
 
-  const logoSrc = mounted && resolvedTheme === 'dark' ? '/logo-dark.svg' : '/logo-light.svg'
+  const isDark = mounted && resolvedTheme === 'dark'
 
   const logo = (
-    <Image
-      src={logoSrc}
-      alt="ListClose"
-      width={dimensions.width}
-      height={dimensions.height}
-      className={className}
-      priority
-    />
+    <div className={`flex items-center gap-2 ${className || ''}`}>
+      <Image
+        src="/logo-icon.png"
+        alt="ListClose"
+        width={dimensions.icon}
+        height={dimensions.icon}
+        priority
+      />
+      {!iconOnly && (
+        <span className={`font-bold ${dimensions.text}`}>
+          <span className="text-[#8DD4BE]">LIST</span>
+          <span className={isDark ? 'text-white' : 'text-gray-900'}>CLOSE</span>
+        </span>
+      )}
+    </div>
   )
 
   if (href) {
