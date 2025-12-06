@@ -1,0 +1,10 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Diamond/Arrow Icon -->
+  <path d="M4 20L16 8L28 20L16 32L4 20Z" fill="#00D9A5" opacity="0.6"/>
+  <path d="M10 20L22 8L34 20L22 32L10 20Z" fill="#00D9A5"/>
+
+  <!-- LISTCLOSE Text -->
+  <text x="42" y="26" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700">
+    <tspan fill="#00D9A5">LIST</tspan><tspan fill="#FFFFFF">CLOSE</tspan>
+  </text>
+</svg>

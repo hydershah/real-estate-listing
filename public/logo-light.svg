@@ -5,6 +5,6 @@
 
   <!-- LISTCLOSE Text -->
   <text x="42" y="26" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700">
-    <tspan fill="#00D9A5">LIST</tspan><tspan fill="currentColor">CLOSE</tspan>
+    <tspan fill="#00D9A5">LIST</tspan><tspan fill="#0B1426">CLOSE</tspan>
   </text>
 </svg>

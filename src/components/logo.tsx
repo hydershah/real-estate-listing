@@ -2,6 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 interface LogoProps {
   href?: string
@@ -16,11 +18,19 @@ const sizes = {
 }
 
 export function Logo({ href, className, size = 'md' }: LogoProps) {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const dimensions = sizes[size]
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const logoSrc = mounted && resolvedTheme === 'dark' ? '/logo-dark.svg' : '/logo-light.svg'
 
   const logo = (
     <Image
-      src="/logo.svg"
+      src={logoSrc}
       alt="ListClose"
       width={dimensions.width}
       height={dimensions.height}
