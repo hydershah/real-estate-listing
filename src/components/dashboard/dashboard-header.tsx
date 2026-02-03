@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
@@ -12,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Settings, User, Menu, X } from 'lucide-react'
+import { LogOut, Settings, User, Menu, X, Home, ShoppingBag } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 interface DashboardHeaderProps {
   userName?: string | null
@@ -22,9 +24,14 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ userName }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
   const initials = userName
     ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'AG'
+
+  // Determine active tab based on pathname
+  const isBuyerSection = pathname?.startsWith('/buyer')
+  const isSellerSection = !isBuyerSection
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -32,20 +39,51 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
         {/* Logo */}
         <Logo href="/dashboard" />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        {/* Seller/Buyer Toggle */}
+        <div className="hidden md:flex items-center gap-1 bg-muted rounded-lg p-1">
           <Link
             href="/dashboard"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+              isSellerSection
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            Dashboard
+            <Home className="h-4 w-4" />
+            Seller
           </Link>
           <Link
-            href="/listings/new"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            href="/buyer"
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+              isBuyerSection
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
           >
-            New Listing
+            <ShoppingBag className="h-4 w-4" />
+            Buyer
           </Link>
+        </div>
+
+        {/* Desktop Navigation - Context-aware links */}
+        <nav className="hidden md:flex items-center gap-6">
+          {isSellerSection ? (
+            <Link
+              href="/listings/new"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              New Listing
+            </Link>
+          ) : (
+            <Link
+              href="/buyer/saved-homes/new"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Save a Home
+            </Link>
+          )}
         </nav>
 
         {/* Right Side */}
@@ -109,21 +147,86 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-background p-4">
-          <nav className="flex flex-col gap-3">
+          {/* Mobile Seller/Buyer Toggle */}
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 mb-4">
             <Link
               href="/dashboard"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                isSellerSection
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground"
+              )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Dashboard
+              <Home className="h-4 w-4" />
+              Seller
             </Link>
             <Link
-              href="/listings/new"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              href="/buyer"
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                isBuyerSection
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground"
+              )}
               onClick={() => setMobileMenuOpen(false)}
             >
-              New Listing
+              <ShoppingBag className="h-4 w-4" />
+              Buyer
             </Link>
+          </div>
+
+          <nav className="flex flex-col gap-3">
+            {isSellerSection ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Seller Dashboard
+                </Link>
+                <Link
+                  href="/listings/new"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  New Listing
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/buyer"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Buyer Dashboard
+                </Link>
+                <Link
+                  href="/buyer/saved-homes/new"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Save a Home
+                </Link>
+                <Link
+                  href="/buyer/tours"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Tours
+                </Link>
+                <Link
+                  href="/buyer/offers"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Offers
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

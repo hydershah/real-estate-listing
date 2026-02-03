@@ -83,6 +83,185 @@ export async function sendListingCreatedEmails(data: ListingEmailData) {
   ])
 }
 
+// ==========================================
+// BUYER DASHBOARD EMAILS
+// ==========================================
+
+interface TourRequestEmailData {
+  propertyAddress: string
+  propertyCity?: string | null
+  propertyState?: string | null
+  requestedDate?: string | null
+  availability?: string | null
+  notes?: string | null
+  userName: string
+  userEmail: string
+}
+
+interface OfferSubmittedEmailData {
+  propertyAddress: string
+  propertyCity?: string | null
+  propertyState?: string | null
+  offerAmount: string
+  notes?: string | null
+  userName: string
+  userEmail: string
+}
+
+export async function sendTourRequestEmailToUser(data: TourRequestEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.userEmail,
+      subject: `Tour Request Submitted: ${data.propertyAddress}`,
+      html: `
+        <h1>Tour Request Submitted!</h1>
+        <p>Hi ${data.userName || 'there'},</p>
+        <p>Your tour request has been submitted. The ListClose team will contact you soon to coordinate the details.</p>
+
+        <h2>Property:</h2>
+        <ul>
+          <li><strong>Address:</strong> ${data.propertyAddress}</li>
+          ${data.propertyCity || data.propertyState ? `<li><strong>Location:</strong> ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}</li>` : ''}
+        </ul>
+
+        <h2>Tour Details:</h2>
+        <ul>
+          ${data.requestedDate ? `<li><strong>Preferred Date:</strong> ${data.requestedDate}</li>` : ''}
+          ${data.availability ? `<li><strong>Availability:</strong> ${data.availability}</li>` : ''}
+          ${data.notes ? `<li><strong>Notes:</strong> ${data.notes}</li>` : ''}
+        </ul>
+
+        <p>We'll be in touch shortly!</p>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send tour request email to user:', error)
+  }
+}
+
+export async function sendTourRequestEmailToAdmin(data: TourRequestEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `New Tour Request: ${data.propertyAddress}`,
+      html: `
+        <h1>New Tour Request</h1>
+        <p>A buyer has requested a property tour.</p>
+
+        <h2>Property:</h2>
+        <ul>
+          <li><strong>Address:</strong> ${data.propertyAddress}</li>
+          ${data.propertyCity || data.propertyState ? `<li><strong>Location:</strong> ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}</li>` : ''}
+        </ul>
+
+        <h2>Tour Details:</h2>
+        <ul>
+          ${data.requestedDate ? `<li><strong>Preferred Date:</strong> ${data.requestedDate}</li>` : ''}
+          ${data.availability ? `<li><strong>Availability:</strong> ${data.availability}</li>` : ''}
+          ${data.notes ? `<li><strong>Notes:</strong> ${data.notes}</li>` : ''}
+        </ul>
+
+        <h2>Buyer Info:</h2>
+        <ul>
+          <li><strong>Name:</strong> ${data.userName || 'N/A'}</li>
+          <li><strong>Email:</strong> ${data.userEmail}</li>
+        </ul>
+
+        <p>Please follow up with the buyer to coordinate the tour.</p>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send tour request email to admin:', error)
+  }
+}
+
+export async function sendTourRequestEmails(data: TourRequestEmailData) {
+  await Promise.all([
+    sendTourRequestEmailToUser(data),
+    sendTourRequestEmailToAdmin(data),
+  ])
+}
+
+export async function sendOfferSubmittedEmailToUser(data: OfferSubmittedEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.userEmail,
+      subject: `Offer Submitted: ${data.propertyAddress}`,
+      html: `
+        <h1>Offer Submitted!</h1>
+        <p>Hi ${data.userName || 'there'},</p>
+        <p>Your offer has been submitted. The ListClose team will prepare the formal offer and keep you updated on its status.</p>
+
+        <h2>Property:</h2>
+        <ul>
+          <li><strong>Address:</strong> ${data.propertyAddress}</li>
+          ${data.propertyCity || data.propertyState ? `<li><strong>Location:</strong> ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}</li>` : ''}
+        </ul>
+
+        <h2>Offer Details:</h2>
+        <ul>
+          <li><strong>Offer Amount:</strong> ${data.offerAmount}</li>
+          ${data.notes ? `<li><strong>Notes:</strong> ${data.notes}</li>` : ''}
+        </ul>
+
+        <p>We'll be in touch with updates!</p>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send offer submitted email to user:', error)
+  }
+}
+
+export async function sendOfferSubmittedEmailToAdmin(data: OfferSubmittedEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `New Offer Submitted: ${data.propertyAddress}`,
+      html: `
+        <h1>New Offer Submitted</h1>
+        <p>A buyer has submitted an offer on a property.</p>
+
+        <h2>Property:</h2>
+        <ul>
+          <li><strong>Address:</strong> ${data.propertyAddress}</li>
+          ${data.propertyCity || data.propertyState ? `<li><strong>Location:</strong> ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}</li>` : ''}
+        </ul>
+
+        <h2>Offer Details:</h2>
+        <ul>
+          <li><strong>Offer Amount:</strong> ${data.offerAmount}</li>
+          ${data.notes ? `<li><strong>Notes:</strong> ${data.notes}</li>` : ''}
+        </ul>
+
+        <h2>Buyer Info:</h2>
+        <ul>
+          <li><strong>Name:</strong> ${data.userName || 'N/A'}</li>
+          <li><strong>Email:</strong> ${data.userEmail}</li>
+        </ul>
+
+        <p>Please prepare the formal offer and follow up with the buyer.</p>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send offer submitted email to admin:', error)
+  }
+}
+
+export async function sendOfferSubmittedEmails(data: OfferSubmittedEmailData) {
+  await Promise.all([
+    sendOfferSubmittedEmailToUser(data),
+    sendOfferSubmittedEmailToAdmin(data),
+  ])
+}
+
+// ==========================================
+// PASSWORD RESET
+// ==========================================
+
 export async function sendPasswordResetEmail(email: string, token: string) {
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`
 
