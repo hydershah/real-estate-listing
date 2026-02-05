@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { RequestTourDialog } from "@/components/buyer/request-tour-dialog"
 import { SubmitOfferDialog } from "@/components/buyer/submit-offer-dialog"
+import { SavedHomeActionsWrapper } from "@/components/buyer/saved-home-actions-wrapper"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -153,26 +154,13 @@ export default async function SavedHomeDetailPage({ params }: PageProps) {
                 Edit
               </Button>
             </Link>
-            {canRequestTour && (
-              <RequestTourDialog savedHomeId={home.id} address={home.address}>
-                <Button variant="outline" size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Request Tour
-                </Button>
-              </RequestTourDialog>
-            )}
-            {canSubmitOffer && (
-              <SubmitOfferDialog
-                savedHomeId={home.id}
-                address={home.address}
-                listingPrice={home.price}
-              >
-                <Button size="sm">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Submit Offer
-                </Button>
-              </SubmitOfferDialog>
-            )}
+            <SavedHomeActionsWrapper
+              savedHomeId={home.id}
+              address={home.address}
+              listingPrice={home.price}
+              canRequestTour={canRequestTour}
+              canSubmitOffer={canSubmitOffer}
+            />
           </div>
         </div>
 

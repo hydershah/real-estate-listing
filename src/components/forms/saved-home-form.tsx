@@ -23,9 +23,10 @@ import { MapPin, DollarSign, Home, Link as LinkIcon } from 'lucide-react'
 
 interface SavedHomeFormProps {
   initialData?: SerializedSavedHome | null
+  isAdmin?: boolean
 }
 
-export function SavedHomeForm({ initialData }: SavedHomeFormProps) {
+export function SavedHomeForm({ initialData, isAdmin = false }: SavedHomeFormProps) {
   const router = useRouter()
   const isEditing = !!initialData
 
@@ -139,116 +140,120 @@ export function SavedHomeForm({ initialData }: SavedHomeFormProps) {
           </CardContent>
         </Card>
 
-        {/* Property Details Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Home className="h-5 w-5 text-primary" />
-              Property Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Property Details Section - Admin Only */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Home className="h-5 w-5 text-primary" />
+                Property Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <FormField
+                  control={form.control}
+                  name="bedrooms"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bedrooms</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="3"
+                          {...field}
+                          value={(field.value as number | undefined) ?? ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bathrooms"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bathrooms</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          placeholder="2"
+                          {...field}
+                          value={(field.value as number | undefined) ?? ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="squareFeet"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Square Feet</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="2000"
+                          {...field}
+                          value={(field.value as number | undefined) ?? ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Price Section - Admin Only */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <DollarSign className="h-5 w-5 text-primary" />
+                Price
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <FormField
                 control={form.control}
-                name="bedrooms"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bedrooms</FormLabel>
+                    <FormLabel>Listing Price</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="3"
-                        {...field}
-                        value={(field.value as number | undefined) ?? ''}
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          $
+                        </span>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="450000"
+                          className="pl-7"
+                          {...field}
+                          value={(field.value as number | undefined) ?? ''}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="bathrooms"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bathrooms</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="2"
-                        {...field}
-                        value={(field.value as number | undefined) ?? ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="squareFeet"
-                render={({ field }) => (
-                  <FormItem className="col-span-2">
-                    <FormLabel>Square Feet</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="2000"
-                        {...field}
-                        value={(field.value as number | undefined) ?? ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Price Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <DollarSign className="h-5 w-5 text-primary" />
-              Price
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Listing Price</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        $
-                      </span>
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="450000"
-                        className="pl-7"
-                        {...field}
-                        value={(field.value as number | undefined) ?? ''}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Additional Info Section */}
         <Card>

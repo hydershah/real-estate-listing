@@ -37,7 +37,7 @@ export default async function NewSavedHomePage() {
         </div>
 
         {/* Form */}
-        <SavedHomeForm />
+        <SavedHomeForm isAdmin={session.user.role === 'ADMIN'} />
       </main>
     </div>
   )

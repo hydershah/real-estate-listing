@@ -3,7 +3,7 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import { sendTourRequestEmails, sendOfferSubmittedEmails } from '@/lib/email'
+import { sendTourRequestEmails, sendOfferSubmittedEmails, sendOfferSupportRequestEmail } from '@/lib/email'
 import {
   savedHomeSchema,
   tourRequestSchema,
@@ -472,5 +472,46 @@ export async function withdrawOffer(offerId: string) {
   } catch (error) {
     console.error('Failed to withdraw offer:', error)
     return { error: 'Failed to withdraw offer' }
+  }
+}
+
+// ==========================================
+// SUPPORT ACTIONS
+// ==========================================
+
+export async function requestOfferSupport(savedHomeId: string, address: string) {
+  const session = await auth()
+
+  if (!session?.user?.id) {
+    return { error: 'Unauthorized' }
+  }
+
+  try {
+    // Verify the saved home belongs to the user
+    const savedHome = await prisma.savedHome.findUnique({
+      where: { id: savedHomeId },
+    })
+
+    if (!savedHome) {
+      return { error: 'Saved home not found' }
+    }
+
+    if (savedHome.userId !== session.user.id) {
+      return { error: 'Unauthorized' }
+    }
+
+    // Send email to agents
+    sendOfferSupportRequestEmail({
+      propertyAddress: address,
+      propertyCity: savedHome.city,
+      propertyState: savedHome.state,
+      userName: session.user.name || '',
+      userEmail: session.user.email || '',
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to request offer support:', error)
+    return { error: 'Failed to send support request' }
   }
 }

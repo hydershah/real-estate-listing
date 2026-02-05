@@ -57,7 +57,14 @@ export const updateTourStatusSchema = z.object({
 // Offer Schema
 export const offerSchema = z.object({
   savedHomeId: z.string().min(1, "Property is required"),
-  amount: z.coerce.number().min(1, "Offer amount is required"),
+  amount: z.preprocess(
+    (val) => {
+      if (val === "" || val === undefined || val === null) return undefined
+      const num = Number(val)
+      return isNaN(num) ? undefined : num
+    },
+    z.number({ message: "Offer amount is required" }).min(1, "Offer amount must be at least $1")
+  ),
   notes: z.string().optional(),
 })
 

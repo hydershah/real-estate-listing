@@ -33,14 +33,23 @@ interface RequestTourDialogProps {
   savedHomeId: string
   address: string
   children: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function RequestTourDialog({
   savedHomeId,
   address,
   children,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: RequestTourDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  // Support both controlled and uncontrolled modes
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled ? (controlledOnOpenChange ?? (() => {})) : setInternalOpen
 
   const form = useForm<TourRequestFormData>({
     resolver: zodResolver(tourRequestSchema),

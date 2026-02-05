@@ -258,6 +258,60 @@ export async function sendOfferSubmittedEmails(data: OfferSubmittedEmailData) {
   ])
 }
 
+interface OfferSupportRequestEmailData {
+  propertyAddress: string
+  propertyCity?: string | null
+  propertyState?: string | null
+  userName: string
+  userEmail: string
+}
+
+export async function sendOfferSupportRequestEmail(data: OfferSupportRequestEmailData) {
+  try {
+    // Send to admin (agent@listclose.com / collin@listclose.com)
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `Offer Support Requested: ${data.propertyAddress}`,
+      html: `
+        <h1>Offer Support Requested</h1>
+        <p>A buyer has requested help with submitting an offer.</p>
+
+        <h2>Property:</h2>
+        <ul>
+          <li><strong>Address:</strong> ${data.propertyAddress}</li>
+          ${data.propertyCity || data.propertyState ? `<li><strong>Location:</strong> ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}</li>` : ''}
+        </ul>
+
+        <h2>Buyer Info:</h2>
+        <ul>
+          <li><strong>Name:</strong> ${data.userName || 'N/A'}</li>
+          <li><strong>Email:</strong> ${data.userEmail}</li>
+        </ul>
+
+        <p>Please reach out to assist with their offer.</p>
+      `,
+    })
+
+    // Also send confirmation to user
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.userEmail,
+      subject: `Offer Support Request Received: ${data.propertyAddress}`,
+      html: `
+        <h1>We've Received Your Request!</h1>
+        <p>Hi ${data.userName || 'there'},</p>
+        <p>Our team has received your request for help with submitting an offer for:</p>
+        <p><strong>${data.propertyAddress}</strong>${data.propertyCity || data.propertyState ? `, ${[data.propertyCity, data.propertyState].filter(Boolean).join(', ')}` : ''}</p>
+        <p>A ListClose agent will contact you shortly to help you through the offer process.</p>
+        <p>Thank you for choosing ListClose!</p>
+      `,
+    })
+  } catch (error) {
+    console.error('Failed to send offer support request email:', error)
+  }
+}
+
 // ==========================================
 // PASSWORD RESET
 // ==========================================

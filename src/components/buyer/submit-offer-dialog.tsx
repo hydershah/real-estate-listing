@@ -24,9 +24,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { FileText, AlertCircle } from 'lucide-react'
+import { FileText, AlertCircle, HelpCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import { createOffer } from '@/app/actions/buyer'
+import { createOffer, requestOfferSupport } from '@/app/actions/buyer'
 import { offerSchema, type OfferFormData } from '@/types/buyer'
 
 interface SubmitOfferDialogProps {
@@ -34,6 +34,8 @@ interface SubmitOfferDialogProps {
   address: string
   listingPrice: number | null
   children: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function SubmitOfferDialog({
@@ -41,8 +43,16 @@ export function SubmitOfferDialog({
   address,
   listingPrice,
   children,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: SubmitOfferDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const [isRequestingSupport, setIsRequestingSupport] = useState(false)
+
+  // Support both controlled and uncontrolled modes
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled ? (controlledOnOpenChange ?? (() => {})) : setInternalOpen
   const [showConfirm, setShowConfirm] = useState(false)
   const [pendingData, setPendingData] = useState<OfferFormData | null>(null)
 
@@ -143,8 +153,14 @@ export function SubmitOfferDialog({
                             min="1"
                             placeholder="450000"
                             className="pl-7"
-                            {...field}
                             value={(field.value as number | undefined) ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              field.onChange(value === '' ? undefined : Number(value))
+                            }}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
                           />
                         </div>
                       </FormControl>
@@ -188,18 +204,45 @@ export function SubmitOfferDialog({
                   )}
                 />
 
-                <DialogFooter>
+                <DialogFooter className="flex-col sm:flex-row gap-2">
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={() => setOpen(false)}
-                    disabled={isSubmitting}
+                    variant="secondary"
+                    onClick={async () => {
+                      setIsRequestingSupport(true)
+                      try {
+                        const result = await requestOfferSupport(savedHomeId, address)
+                        if (result.error) {
+                          toast.error(result.error)
+                        } else {
+                          toast.success('Support request sent! Our team will contact you soon.')
+                          setOpen(false)
+                        }
+                      } catch {
+                        toast.error('Something went wrong')
+                      } finally {
+                        setIsRequestingSupport(false)
+                      }
+                    }}
+                    disabled={isSubmitting || isRequestingSupport}
+                    className="sm:mr-auto"
                   >
-                    Cancel
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    {isRequestingSupport ? 'Requesting...' : 'Request Offer Support'}
                   </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    Review Offer
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setOpen(false)}
+                      disabled={isSubmitting || isRequestingSupport}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting || isRequestingSupport}>
+                      Review Offer
+                    </Button>
+                  </div>
                 </DialogFooter>
               </form>
             </Form>

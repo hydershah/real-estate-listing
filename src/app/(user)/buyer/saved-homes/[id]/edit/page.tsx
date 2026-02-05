@@ -62,7 +62,7 @@ export default async function EditSavedHomePage({ params }: PageProps) {
         </div>
 
         {/* Form */}
-        <SavedHomeForm initialData={home} />
+        <SavedHomeForm initialData={home} isAdmin={session.user.role === 'ADMIN'} />
       </main>
     </div>
   )
