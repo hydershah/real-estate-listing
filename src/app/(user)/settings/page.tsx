@@ -216,7 +216,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader userName={session.user.name} />
+      <DashboardHeader userName={session.user.name} userRole={session.user.role as string} />
 
       <main className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
         {/* Page Header */}

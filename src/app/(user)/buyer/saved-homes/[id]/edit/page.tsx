@@ -40,7 +40,7 @@ export default async function EditSavedHomePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader userName={session.user.name} />
+      <DashboardHeader userName={session.user.name} userRole={session.user.role} />
 
       <main className="p-4 md:p-6 lg:p-8 max-w-3xl mx-auto">
         {/* Back Link */}

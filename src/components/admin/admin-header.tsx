@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Settings, LayoutDashboard, Building, Menu, X } from 'lucide-react'
+import { LogOut, LayoutDashboard, Building, Menu, X, Home, ShoppingBag } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 
@@ -84,6 +84,19 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
                 <Link href="/admin/listings" className="cursor-pointer">
                   <Building className="mr-2 h-4 w-4" />
                   Listings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard" className="cursor-pointer">
+                  <Home className="mr-2 h-4 w-4" />
+                  Seller Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/buyer" className="cursor-pointer">
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Buyer Dashboard
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

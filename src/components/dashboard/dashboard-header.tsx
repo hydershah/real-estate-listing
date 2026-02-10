@@ -13,16 +13,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Settings, User, Menu, X, Home, ShoppingBag } from 'lucide-react'
+import { LogOut, Settings, User, Menu, X, Home, ShoppingBag, Shield } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface DashboardHeaderProps {
   userName?: string | null
+  userRole?: string | null
 }
 
-export function DashboardHeader({ userName }: DashboardHeaderProps) {
+export function DashboardHeader({ userName, userRole }: DashboardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const initials = userName
@@ -31,7 +32,9 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
 
   // Determine active tab based on pathname
   const isBuyerSection = pathname?.startsWith('/buyer')
-  const isSellerSection = !isBuyerSection
+  const isAdminSection = pathname?.startsWith('/admin')
+  const isSellerSection = !isBuyerSection && !isAdminSection
+  const isAdmin = userRole === 'ADMIN'
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,6 +68,20 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
             <ShoppingBag className="h-4 w-4" />
             Buyer
           </Link>
+          {isAdmin && (
+            <Link
+              href="/admin/dashboard"
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                isAdminSection
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Shield className="h-4 w-4" />
+              Admin
+            </Link>
+          )}
         </div>
 
         {/* Desktop Navigation - Context-aware links */}
@@ -121,6 +138,17 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
                   Settings
                 </Link>
               </DropdownMenuItem>
+              {isAdmin && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/dashboard" className="cursor-pointer">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer text-destructive focus:text-destructive"
@@ -175,6 +203,21 @@ export function DashboardHeader({ userName }: DashboardHeaderProps) {
               <ShoppingBag className="h-4 w-4" />
               Buyer
             </Link>
+            {isAdmin && (
+              <Link
+                href="/admin/dashboard"
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+                  isAdminSection
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground"
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Shield className="h-4 w-4" />
+                Admin
+              </Link>
+            )}
           </div>
 
           <nav className="flex flex-col gap-3">
