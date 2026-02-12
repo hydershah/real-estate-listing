@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, LayoutDashboard, Building, Menu, X, Home, ShoppingBag } from 'lucide-react'
+import { LogOut, LayoutDashboard, Building, Menu, X, Home, ShoppingBag, Users } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 
@@ -49,6 +49,12 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
           >
             Listings
           </Link>
+          <Link
+            href="/admin/buyers"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Buyers
+          </Link>
         </nav>
 
         {/* Right Side */}
@@ -84,6 +90,12 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
                 <Link href="/admin/listings" className="cursor-pointer">
                   <Building className="mr-2 h-4 w-4" />
                   Listings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/buyers" className="cursor-pointer">
+                  <Users className="mr-2 h-4 w-4" />
+                  Buyers
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -139,6 +151,13 @@ export function AdminHeader({ userName }: AdminHeaderProps) {
               onClick={() => setMobileMenuOpen(false)}
             >
               Listings
+            </Link>
+            <Link
+              href="/admin/buyers"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Buyers
             </Link>
             <button
               className="text-sm font-medium text-destructive hover:text-destructive/80 transition-colors text-left"

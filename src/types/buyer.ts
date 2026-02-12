@@ -147,3 +147,54 @@ export type SerializedOffer = {
   updatedAt: Date
   savedHome?: SerializedSavedHome
 }
+
+// Admin view types (ISO strings for explicit server→client serialization)
+export type SerializedAdminTour = {
+  id: string
+  savedHomeId: string
+  requestedDate: string | null
+  scheduledDate: string | null
+  availability: string | null
+  status: TourStatus
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type SerializedAdminOffer = {
+  id: string
+  savedHomeId: string
+  amount: number | null
+  status: OfferStatus
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type SerializedAdminSavedHome = {
+  id: string
+  address: string
+  city: string | null
+  state: string | null
+  zipCode: string | null
+  price: number | null
+  bedrooms: number | null
+  bathrooms: number | null
+  squareFeet: number | null
+  listingUrl: string | null
+  notes: string | null
+  status: SavedHomeStatus
+  createdAt: string
+  tours: SerializedAdminTour[]
+  offer: SerializedAdminOffer | null
+}
+
+export type SerializedAdminBuyer = {
+  id: string
+  name: string | null
+  email: string
+  savedHomes: SerializedAdminSavedHome[]
+  totalHomes: number
+  activeTours: number
+  activeOffers: number
+}

@@ -44,6 +44,7 @@ export async function createSavedHome(data: SavedHomeFormData) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/saved-homes')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to save home:', error)
@@ -71,7 +72,7 @@ export async function updateSavedHome(id: string, data: SavedHomeFormData) {
       return { error: 'Saved home not found' }
     }
 
-    if (savedHome.userId !== session.user.id) {
+    if (savedHome.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
 
@@ -83,6 +84,7 @@ export async function updateSavedHome(id: string, data: SavedHomeFormData) {
     revalidatePath('/buyer')
     revalidatePath('/buyer/saved-homes')
     revalidatePath(`/buyer/saved-homes/${id}`)
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to update saved home:', error)
@@ -104,7 +106,7 @@ export async function deleteSavedHome(id: string) {
       return { error: 'Saved home not found' }
     }
 
-    if (savedHome.userId !== session.user.id) {
+    if (savedHome.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
 
@@ -112,6 +114,7 @@ export async function deleteSavedHome(id: string) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/saved-homes')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to delete saved home:', error)
@@ -133,7 +136,7 @@ export async function updateSavedHomeStatus(id: string, status: 'SAVED' | 'TOURI
       return { error: 'Saved home not found' }
     }
 
-    if (savedHome.userId !== session.user.id) {
+    if (savedHome.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
 
@@ -145,6 +148,7 @@ export async function updateSavedHomeStatus(id: string, status: 'SAVED' | 'TOURI
     revalidatePath('/buyer')
     revalidatePath('/buyer/saved-homes')
     revalidatePath(`/buyer/saved-homes/${id}`)
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to update saved home status:', error)
@@ -217,6 +221,7 @@ export async function requestTour(data: TourRequestFormData) {
     revalidatePath('/buyer')
     revalidatePath('/buyer/tours')
     revalidatePath(`/buyer/saved-homes/${validatedFields.data.savedHomeId}`)
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to request tour:', error)
@@ -264,6 +269,7 @@ export async function updateTourStatus(data: UpdateTourStatusData) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/tours')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to update tour status:', error)
@@ -288,7 +294,7 @@ export async function cancelTour(tourId: string) {
       return { error: 'Tour not found' }
     }
 
-    if (tour.savedHome.userId !== session.user.id) {
+    if (tour.savedHome.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
 
@@ -299,6 +305,7 @@ export async function cancelTour(tourId: string) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/tours')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to cancel tour:', error)
@@ -383,6 +390,7 @@ export async function createOffer(data: OfferFormData) {
     revalidatePath('/buyer')
     revalidatePath('/buyer/offers')
     revalidatePath(`/buyer/saved-homes/${validatedFields.data.savedHomeId}`)
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to create offer:', error)
@@ -427,6 +435,7 @@ export async function updateOfferStatus(data: UpdateOfferStatusData) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/offers')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to update offer status:', error)
@@ -451,7 +460,7 @@ export async function withdrawOffer(offerId: string) {
       return { error: 'Offer not found' }
     }
 
-    if (offer.savedHome.userId !== session.user.id) {
+    if (offer.savedHome.userId !== session.user.id && session.user.role !== 'ADMIN') {
       return { error: 'Unauthorized' }
     }
 
@@ -468,6 +477,7 @@ export async function withdrawOffer(offerId: string) {
 
     revalidatePath('/buyer')
     revalidatePath('/buyer/offers')
+    revalidatePath('/admin/buyers')
     return { success: true }
   } catch (error) {
     console.error('Failed to withdraw offer:', error)
